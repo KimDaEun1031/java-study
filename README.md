@@ -9,7 +9,8 @@ https://zzang9ha.tistory.com/302
 하나의 프로세스에서 독립적으로 실행되는 하나의 일(or 작업)의 단위  
 
 #### JAVA Thread 생명주기
-![다운로드 (1)](https://user-images.githubusercontent.com/73865700/126848650-2a7a0b9f-3194-4dfe-b65a-34dd64103507.png)
+![다운로드 (1)](https://user-images.githubusercontent.com/73865700/126848650-2a7a0b9f-3194-4dfe-b65a-34dd64103507.png)  
+Thread 객체 생성 -> start() 호출 -> run()호출 -> [실행 상태 <-> 실행 가능 상태] <-> [대기 상태] by sleep() 등의 메소드 -> terminated
 
 #### Thread 정보
 ||타입|관련 메소드|내용|
@@ -37,7 +38,7 @@ https://zzang9ha.tistory.com/302
 2. 메인 Thread : main() 메소드를 호출해서 실행하는 역할 기본 Thread
 
 #### Process
-현재 실행 중인 응용 프로그램의 최소 실행 단위
+메모리에 적재되어 프로세서에 의해 실행 중인 프로그램
 
 #### Process 종류
 1. Foreground Process : 눈으로 확인 가능한 범위에서 진행되는 프로세스
@@ -45,6 +46,11 @@ https://zzang9ha.tistory.com/302
 2. Background Process : 응용 프로그램의 실행을 뒤에서 보조하는 프로세스
    ex) 작업관리자의 백그라운드 프로세스에서 확인 가능
    
+#### Processer
+||하드웨어|소프트웨어|
+|----|----|----|
+|정의|컴퓨터 내에서 프로그램을 수행하는 하드웨어 유닛이다. 이는 중앙 처리 장치(Central Processing Unit)을 뜻하며 폰노이만 아키텍쳐에 의해 만들어졌다면 적어도 하나 이상의 ALU(연산장치, Arithmetic Logic Unit)와 처리 레지스터(Register)를 내장하고 있어야한다.|데이터 포맷을 변환하는 역할을 수행하는 데이터 프로세싱 시스템(데이터 처리 시스템)을 의미한다.|
+
 #### Thread Description
 + 참고 영상 : https://www.youtube.com/watch?v=iks_Xb9DtTM  
 예전 컴퓨터에서는 Multi Tasking이 되지 않고 하나씩 실행되었다. 예로 들어서 게임 다운로드를 한다고 하면 다운로드하는 그 장면에서 마우스와 키보드 모두 사용이 안되서 아무것도 할 수 없는 상태가 된다.(지금처럼 브라우저나 다른 프로그램을 동시에 실행하지 못함)  
@@ -74,4 +80,161 @@ https://zzang9ha.tistory.com/302
 각각의 프로세스에 할당된 자원들을 스레드가 함께 사용하는 것
 ![p](https://user-images.githubusercontent.com/73865700/126625232-f227f6dc-e729-4db5-90c3-e1e8d30862ad.png)
 
+#### Thread 예제
+RamenProgram
+```
+public class RamenProgram {
 
+    public static void main(String args[]) {
+        try {
+            RamenCook ramenCook = new RamenCook(4);
+            new Thread(ramenCook, "A").start();
+            new Thread(ramenCook, "B").start();
+            new Thread(ramenCook, "C").start();
+            new Thread(ramenCook, "D").start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+class RamenCook implements Runnable {
+
+    private int ramenCount;
+    private String[] burners = {"_", "_", "_", "_"};
+
+    public RamenCook(int count) {
+        ramenCount = count;
+    }
+
+    @Override
+    public void run() {
+        while (ramenCount > 0) {
+
+            synchronized (this) {
+                ramenCount--;
+                System.out.println(
+                    Thread.currentThread().getName()
+                    + ": " + ramenCount + "개 남은"
+                );
+            }
+
+            for (int i = 0; i < burners.length; i++) {
+                if (!burners[i].equals("_")) continue;
+
+                synchronized (this) {
+                    burners[i] = Thread.currentThread().getName();
+                    System.out.println(
+                        "                 "
+                        + Thread.currentThread().getName()
+                        + ": [" + (i + 1) + "]번 버너 ON"
+                    );
+                    showBurners();
+                }
+
+                try {
+                    Thread.sleep(2000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                synchronized (this) {
+                    burners[i] = "_";
+                    System.out.println(
+                        "                                    "
+                        + Thread.currentThread().getName()
+                        + ": [" + (i + 1) + "]번 버너 OFF"
+                    );
+                    showBurners();
+                }
+                break;
+            }
+            try {
+                Thread.sleep(Math.round(1000 * Math.random()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showBurners() {
+        String stringToPrint
+            = "                                           ";
+        for (int i = 0; i < burners.length; i++) {
+            stringToPrint += (" "+ burners[i]);
+        }
+        System.out.println(stringToPrint);
+    }
+}
+```
+Result
+```
+A: 3개 남은
+                 A: [1]번 버너 ON
+                                            A _ _ _
+C: 2개 남은
+                 C: [2]번 버너 ON
+                                            A C _ _
+D: 1개 남은
+                 D: [3]번 버너 ON
+                                            A C D _
+B: 0개 남은
+                 B: [4]번 버너 ON
+                                            A C D B
+                                    C: [2]번 버너 OFF
+                                            A _ D B
+                                    D: [3]번 버너 OFF
+                                            A _ _ B
+                                    A: [1]번 버너 OFF
+                                            _ _ _ B
+                                    B: [4]번 버너 OFF
+                                            _ _ _ _
+```
+
+# Multi Thread
++ 하나의 프로그램에서 동시에 여러 개의 일을 수행할 수 있도록 해주는 것
++ 하나의 프로세스를 다수의 실행단위로 구분하여 자원을 공유하고 자원의 생성과 관리의 중복성을 최소화하여 수행 능력을 향상시키는 것을 **멀티스레딩**이라고 한다.
+
+#### Multi Thread 사용 이유
++ 프로세스를 이용하여 동시에 처리하던 일을 스레드로 구현할 경우 메모리 공간과 시스템 자원 소모가 줄어든게 된다.
++ 스레드 간의 통신이 필요한 경우에도  별도의 자원을 이용하는 것이 아니라 **전역 변수의 공간** or 동적으로 할당된 공간인 **힙(Heap) 영역**을 이용하여 데이터를 주고 받을 수 있다.
+-> 프로세스 간 통신 방법에 비해 스레드 간의 통신 방법이 훨씬 간단하다.
+
++ 스레드의 **문맥 교환(Context-Switching)** 은 프로세스의 문맥교환 과 달리 **캐시 메모리를 비울 필요가 없기 때문에** 더 빠르다.
+-> **시스템의 처리량** 이 향상되며 자원소모가 줄어들어 프로그램의 응답시간 단축된다.
+
+#### Single Thread(단일 스레드) vs Multi Thread(다중 스레드)
+![다운로드](https://user-images.githubusercontent.com/73865700/126851251-b26e4874-eff7-4319-9123-4ca5c974c615.jpg)
+#### Single Thread 장점
+1) 자원 접근에 대한 동기화를 신경쓰지 않아도 된다.  
+   여러 개의 스레드가 공유된 자원을 사용할 경우 각 스레드가 원하는 결과를 얻게 하려면 공용자원에 대한 접근이 통제되야하는 작업 -> 비용 발생 -> 단일 스레드는 필요치 않음
+   
+2) 문맥 교환(Context-Switch) 작업을 요구하지 않는다.  
+   문맥교환은 여러 개의 프로세스가 하나의 프로세서를 공유할 때 발생하는 작업 -> 많은 비용 필요
+   
+3) CPU만을 사용하는 계산 작업에 더 효율적이다.
+   두 개의 작업을 하나의 스레드로 처리하는 경우와 두 개의 스레드로 처리하는 경우 후자의 경우에는 짧은 시간동안 2개의 스레드가 번갈아가면서 작업을 수행하기에 동시에 두 작업이 처리되는 것과 같    이 느낌이 든다. 하지만 두 개의 스레드로 작업하는 시간이 더 걸릴 수도 있는데, 그 이유는 스레드 간의 문맥 전환에 시간이 걸리기 때문이다. 
+
+#### Single Thread 단점
+1) 여러 개의 CPU를 활요하지 못한다.
+   프로세서를 최대한 활용하게 하려면 cluster 모듈을 사용하거나, 외부에서 여러 개의 프로그램 인스턴스를 실행시키는 방법을 사용해야 한다.
+
+#### Multi Thread 장점
+1) 새로운 프로세스를 생성하는 것보다 기존 프로세스에서 스레드를 생성하는 것이 빠르다.
+   프로세스 생성은 많은 시간과 자원을 소비 -> 이러한 단점을 최소화 시킨 **경량화의 프로세스 = 스레드** 를 만듬
+
+2) 프로세스의 자원의 상태를 공유하여 효율적으로 운영이 가능하다.
+   Multi Thread에서 스레드 간 스택 영역만 비공유하고 데이터 영역과 힙 영역을 공유 -> 문맥 교환 시 데이터 영역과 힘을 올리고 내릴 필요가 없음
+
+3) 프로세스의 문맥 교환보다 스레드의 문맥 교환이 빠르다.
+   스레드 사이에서의 데이터 교환은 특별한 기법이 필요 없음
+   
+#### Multi Thread 단점
+1) 하나의 스레드만 실행 중일 때에는 실행시간이 되려 지연될 수 있다.
+
+
+2) 멀티 스레딩을 위해 운영체제의 지원이 필요하다.
+  
+
+3) 스레드 스케쥴링을 신경써야한다.
+   
