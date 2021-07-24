@@ -38,7 +38,7 @@ Thread 객체 생성 -> start() 호출 -> run()호출 -> [실행 상태 <-> 실�
 2. 메인 Thread : main() 메소드를 호출해서 실행하는 역할 기본 Thread
 
 #### Process
-메모리에 적재되어 프로세서에 의해 실행 중인 프로그램
+메모리에 적재되어 Processer에 의해 실행 중인 프로그램
 
 #### Process 종류
 1. Foreground Process : 눈으로 확인 가능한 범위에서 진행되는 프로세스
@@ -234,7 +234,91 @@ B: 0개 남은
 
 
 2) 멀티 스레딩을 위해 운영체제의 지원이 필요하다.
-  
+   스레드는 프로세스의 자원을 공유하는데 운영체제의 자원 관리 기능으로 프로세스에 자원을 할당시켜주기 때문에 지원이 필요함
 
-3) 스레드 스케쥴링을 신경써야한다.
+3) 멀티 스레드 환경에서는 동기화 작업이 필요하다.
+   동기화를 통해서 작업처리순서와 공유 자원에 대한 접근 컨트롤하는데 공유 자원인 부분은 어떤 스레드가 다른 스레드에서 사용 중인 변수나 자료구조에 접근하여 엉뚱한 값을 읽어오거나 수정할 수 있
+   기에 synchronized 키워드를 이용해 동기화를 해야한다. 동기화를 사용하지 않으면 Thread-safe(프로그램이 문제없이 원활하게 실행되는 것)가 되지 않기 때문에 사용을 해야한다. 하지만 동기화 작업
+   으로 병목 현상(과도한 락으로 인해 용량이나 성능이 저하되는 현상)이 발생할 수 있기에 공유 자원이 아닌 부분은 할 필요가 없다.
    
+#### Multi Thread 예제
+1. java.lang.thread 클래스를 직접 객체화 해서 생성하는 방법
+```
+public class ThreadSynchronized {
+
+    public static void main (String[] args) {
+
+        Task task = new Task();
+        Thread t1 = new Thread(task);
+        Thread t2 = new Thread(task);
+
+        t1.setName("t1-thread");
+        t2.setName("t2-thread");
+
+        t1.start();
+        t2.start();
+    }
+}
+
+class Account{
+    int balance = 1000;
+
+    public synchronized void withDraw(int money) {
+        if(balance >= money) {
+            try {
+                Thread thread = Thread.currentThread();
+                System.out.println(thread.getName() + " 출금 금액 ==> " +money);
+                Thread.sleep(1000);
+                balance -= money;
+                System.out.println(thread.getName() + " balance: " +balance);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+class Task implements Runnable {
+    Account acc = new Account();
+
+    @Override
+    public void run() {
+        while(acc.balance > 0) {
+            int money = (int) (Math.random() * 3 + 1) * 100;
+            acc.withDraw(money);
+        }
+    }
+}
+```
+
+2. Thread를 상속해서 하위클래스를 만들어 생성하는 방법
+```
+public class MultiThreadPractice {
+    public static void main(String[] args) throws Exception {
+    
+        // 하나의 Thread 생성
+        MultiThread[] multiThread = new MultiThread[1];
+        multiThread[0] = new MultiThread();
+        multiThread[0].start();
+
+        // 다수의 Thread 생성
+        MultiThread[] multiThreads = new MultiThread[3];
+        for(int i=0; i<multiThreads.length; i++) {
+            multiThreads[i] = new MultiThread();
+            multiThreads[i].start();
+        }
+    }
+}
+
+class MultiThread extends Thread {
+    MultiThread(){}
+    public void run(){
+        try {
+            System.out.println("This is One Thread Program");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
