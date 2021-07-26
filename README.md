@@ -7,6 +7,7 @@ https://zzang9ha.tistory.com/302
 
 # Thread
 하나의 프로세스에서 독립적으로 실행되는 하나의 일(or 작업)의 단위  
++ 참고하면 좋은 사이트 : https://ict-nroo.tistory.com/41
 
 #### JAVA Thread 생명주기
 ![다운로드 (1)](https://user-images.githubusercontent.com/73865700/126848650-2a7a0b9f-3194-4dfe-b65a-34dd64103507.png)  
@@ -189,6 +190,61 @@ B: 0개 남은
                                             _ _ _ B
                                     B: [4]번 버너 OFF
                                             _ _ _ _
+                                            
+```
+
+#### Thread Scheduling
+멀티스레드의 순서를 정하는 것
++ 참고 사이트 : https://coding-factory.tistory.com/569
+
+#### Thread Scheduling 방식
+||우선 순위(Priority) 방식|순환 할당(Round-Robin) 방식|
+|----|----|----|
+|정의|우선순위가 높은 스레드가 실행 상태를 더 많이 가지도록 스케쥴링 하는 것|시간 할당량(Time Slice)을 정해서 하나의 스레드를 정해진 시간만큼 실행하고 다시 다른 스레드를 실행하는 방식|
+|설명|setPriority() 메소드를 사용하여 우선순위를 설정한다.|JVM(Java Virtual Machine)에 의해 결정되기 때문에 임의로 설정할 수 없다.|
+
+#### Thread Scheduling 예제
+```
+public class ThreadScheduling {
+    public static void main(String[] args) {
+        for(int i=0;i<=5;i++) {
+            Thread thread = new Scheduled("[ Thread " + i + " ]");
+            if (i == 5)
+                thread.setPriority(Thread.MAX_PRIORITY); //MAX 우선순위 = 10 
+            else                                         // Thread.NORM_PRIORITY = 5 기본
+                thread.setPriority(Thread.MIN_PRIORITY); //MIN 우선순위 = 1
+            thread.start();
+        }
+    }
+
+}
+
+class Scheduled extends Thread {
+    public Scheduled(String threadName) {
+        this.setName(threadName);
+    }
+
+    public void run() {
+        for(int i=0; i<1000; i++) { //시간을 지연시키기 위함
+            int x = 100; x += i;
+            for(int j = 0; j< 10000; j++) {
+                x += j;
+            }
+        }
+
+        System.out.println(this.getName() + " Thread_Start ");
+    }
+}
+
+```
+RESULT
+```
+[ Thread 5 ] Thread_Start 
+[ Thread 4 ] Thread_Start 
+[ Thread 1 ] Thread_Start 
+[ Thread 3 ] Thread_Start 
+[ Thread 2 ] Thread_Start 
+[ Thread 0 ] Thread_Start
 ```
 
 # Multi Thread
@@ -319,6 +375,288 @@ class MultiThread extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+}
+```
+
+#### Blocking Queue
+java.util.concurrent 패키지에 있는 인터페이스로 Thread-safe한 Queue이다. 특정 상황에 스레드를 대기하도록 하는 Queue이며 Queue가 꽉 차있는데 Put을 하거나(enqueue()) 비어있는데 Take를(dequeue()) 할 때 enqueue/dequeue 호출 스레드를 대기하도록 한다. enqueue/dequeue 상태는 Queue에 Put/Take가 될 때 까지 지속된다.
+
+#### Blocking Queue 구현체
+|구현체 이름|설명|
+|----|----|
+|ArrayBlockingQueue|고정 배열에 일반적인 Queue를 구현한 클래스|
+|LinkedBlockingQueue|선택적으로 Bound가 가능한 Linked list로 구현한 Queue|
+|PriorityBlockingQueue|정렬 방식을 지니는 용량제한이 없는 Queue|
+|SynchronousQueue|버퍼가 없어 대기 Thread list를 관리하는 Queue|
+
+#### Blocking Queue 특징
+1. null을 허용하지 않는다. 
+   + null 값을 add/put/offer를 하면 NullPointerException 발생
+   + null 값은 poll 작업의 실패를 나타낼 때 사용한다.
+
+2. capacity bound
+   + Blocking Queue는 용량, capacity에 제한을 둘 수 있다.
+   + capacity에 제약을 두지 않으면 Integer.Max_Value이 기본으로 설정된다.
+
+3. Collection 인터페이스 지원
+   + BlockingQueue는 Producer-Consumer 패턴의 대기열 목적으로 디자인되었다.
+     하지만 Collection 인터페이스를 지원해서, remove(x)와 같이 임의의 데이터를 Queue에서 지울 수 있다.
+     이 작업은 매우 비효율적이며, 대기중인 메세지가 취소되는 경우와 같이 가끔씩 사용하기 위해 만든다.
+
+4. Thread-safe가 되게 구현
+   + 모든 Queue 메소드들은 내부적으로 locks 또는 동시성 제어를 사용하여 원자성을 보장한다.
+   + Bulk Collection Operations (addAll, containsAll, retainAll, removeAll 등)은 원자성을 보장하지 않는다.(원자성을 보장하려면 따로 구현)
+   + addAll(c)로 100개의 데이터를 queue에 넣을 때, 일부는 넣고 실패할 수 있다. (throwing Exception)
+ 
+5. 더 이상 데이터가 추가되지 않는 것을 나타내기 위한 close,shutdown같은 작업을 지원하지 않는다
+   + 목적에 맞춰서 구현해야한다.
+   + 일반적으로 producer가 특수한 end-of-stream 또는 poison 객체를 삽입하고 , consumer가 판단하는 패턴으로 구현해야한다.\
+   
+#### Blocking Queue Method
+![61859757-b486b300-af03-11e9-9ad7-57f00107d003](https://user-images.githubusercontent.com/73865700/126966058-0b8741b8-ecef-4170-98f3-e7183b2e1b72.png)
+
+#### Multi Thread Design Pattern - Producer&Consumer Pattern
+생산자/소비자 패턴은 멀티스레드 환경에서 주로 쓰이는 패턴이다. 생산자와 소비자는 하나의 클래스를 공유하고 그 클래스는 Queue 구조를 가지게 된다. 생산자는 데이터를 지속적으로 생산해 Queue에 Push하는 일을 소비자는 데이터를 지속적으로 소비해 Queue에서 Pop하는 일을 한다.
+
+#### Producer&Consumer Pattern 예제 & 구조
+
+1. Blocking Queue를 이용한 Producer&Consumer Pattern (1)
++ 참고 사이트 : https://niceman.tistory.com/94
+
+![dddfdfdfdf](https://user-images.githubusercontent.com/73865700/126962213-ce65c4a1-79ee-4f6a-b98f-19f967976ae1.png)
+
+#### Message Class
+```
+public class Message {
+    private String msg;
+
+    public Message(String str) {
+        this.msg=str;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+}
+```
+
+#### FisrtConsumer & SecondConsumer Class
+```
+import lombok.extern.slf4j.Slf4j;
+import java.util.concurrent.BlockingQueue;
+
+@Slf4j
+public class FirstConsumer implements Runnable {
+    private BlockingQueue<Message> queue;
+
+    public FirstConsumer(BlockingQueue<Message> q) {
+        this.queue=q;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Message msg;
+
+            while ((msg = queue.take()).getMsg() !="exit") {
+                Thread.sleep(10);
+                System.out.println("Consumed"+msg.getMsg());
+                log.info("Consumer thread id : "+Thread.currentThread().getId());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```
+import lombok.extern.slf4j.Slf4j;
+import java.util.concurrent.BlockingQueue;
+
+@Slf4j
+public class SecondConsumer implements Runnable {
+    private BlockingQueue<Message> queue;
+
+    public SecondConsumer(BlockingQueue<Message> q) {
+        this.queue=q;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Message msg;
+
+            while ((msg = queue.take()).getMsg() !="exit") {
+                Thread.sleep(10);
+                System.out.println("SecondConsumed"+msg.getMsg());
+                log.info("SecondConsumer thread id : "+Thread.currentThread().getId());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### Producer Class
+```
+import lombok.extern.slf4j.Slf4j;
+import java.util.concurrent.BlockingQueue;
+
+@Slf4j
+public class Producer implements Runnable {
+    private BlockingQueue<Message> queue;
+
+    public Producer(BlockingQueue<Message> q) {
+        this.queue=q;
+    }
+
+    @Override
+    public void run() {
+        for(int i=0;i<31;i++) {
+            Message msg = new Message(""+i);
+            try {
+                Thread.sleep(i);
+                queue.put(msg);
+                System.out.println("Produced"+msg.getMsg());
+                log.info("Producer thread id : "+Thread.currentThread().getId());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Message msg = new Message("exit");
+        try {
+            queue.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### Main Class
+```
+import lombok.extern.slf4j.Slf4j;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+@Slf4j
+public class Main {
+    public static void main(String[] args) {
+        BlockingQueue<Message> queue = new ArrayBlockingQueue<>(30);
+        Producer producer = new Producer(queue);
+        FirstConsumer consumer = new FirstConsumer(queue);
+        SecondConsumer secondConsumer = new SecondConsumer(queue);
+
+        Thread threadProducer = new Thread(producer);
+        Thread threadConsumer = new Thread(consumer);
+        Thread threadSecondConsumer = new Thread(secondConsumer);
+
+        threadProducer.start();
+        threadConsumer.start();
+        threadSecondConsumer.start();
+
+        System.out.println("Test Start");
+
+    }
+}
+```
+
+2. Blocking Queue를 이용한 Producer&Consumer Pattern (2)
++ 참고 사이트 : https://www.baeldung.com/java-blocking-queue
+#### NumbersConsumer Class
+```
+import java.util.concurrent.BlockingQueue;
+public class NumbersConsumer implements Runnable{
+    private BlockingQueue<Integer> queue;
+    private final int poisonPill;
+
+    public NumbersConsumer(BlockingQueue<Integer> queue, int poisonPill) {
+        this.queue=queue;
+        this.poisonPill=poisonPill;
+    }
+
+    public void run() {
+        try {
+            while (true) {
+                Integer number = queue.take();
+                if(number.equals(poisonPill)) {
+                    return;
+                }
+                System.out.println("Thread Name : " + Thread.currentThread().getName() + " & result : " + number);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+
+```
+
+#### NumbersProducer Class
+```
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class NumbersProducer implements Runnable{
+
+    private BlockingQueue<Integer> numbersQueue;
+    private final int poisonPill;
+    private final int poisonPillPerProducer;
+
+    public NumbersProducer(BlockingQueue<Integer> numbersQueue, int poisonPill, int poisonPillPerProducer) {
+        this.numbersQueue = numbersQueue;
+        this.poisonPill = poisonPill;
+        this.poisonPillPerProducer = poisonPillPerProducer;
+    }
+
+    public void run() {
+        try {
+            generateNumbers();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void generateNumbers() throws InterruptedException {
+        for (int i=0; i< 10; i++) {
+            numbersQueue.put(ThreadLocalRandom.current().nextInt(10));
+        }
+        for (int j=0; j< poisonPillPerProducer; j++) {
+            numbersQueue.put(poisonPill);
+        }
+    }
+}
+```
+
+#### NumbersMain Class
+```
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
+public class NumbersMain {
+
+    public static void main(String args[]) {
+        int BOUND = 10;
+        int N_PRODUCERS = 4;
+        int N_CONSUMERS = Runtime.getRuntime().availableProcessors();
+        int poisonPill = Integer.MAX_VALUE;
+        int poisonPillPerProducer = N_CONSUMERS/N_PRODUCERS;
+        int mod = N_CONSUMERS % N_PRODUCERS;
+
+        BlockingQueue<Integer> queue = new LinkedBlockingDeque<>(BOUND);
+
+        for(int i=1; i<N_PRODUCERS; i++) {
+            new Thread(new NumbersProducer(queue, poisonPill, poisonPillPerProducer)).start();
+        }
+        for(int i=1; i<N_CONSUMERS; i++) {
+            new Thread(new NumbersConsumer(queue, poisonPill)).start();
+        }
+
+        new Thread(new NumbersProducer(queue,poisonPill,poisonPillPerProducer+mod)).start();
     }
 }
 ```
