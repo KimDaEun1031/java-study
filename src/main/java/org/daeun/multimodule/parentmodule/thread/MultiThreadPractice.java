@@ -44,8 +44,6 @@ class MultiThreadProblem extends Thread {
     MultiThreadProblem(){}
     public void run() {
         try {
-            String lang = "eng";
-            sp.story(lang);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,8 +51,7 @@ class MultiThreadProblem extends Thread {
 }
 
 class SolveProblem {
-    public synchronized void story(String lang) {
-        lang = "kor";
-        System.out.println(String.format("This is Thread Program Error money = %s",lang));
+    public synchronized void story() {
+        System.out.println("This is Thread Program Error");
     }
 }
