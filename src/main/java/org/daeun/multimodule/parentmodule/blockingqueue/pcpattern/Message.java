@@ -1,4 +1,4 @@
-package org.daeun.multimodule.parentmodule.blockingqueue;
+package org.daeun.multimodule.parentmodule.blockingqueue.pcpattern;
 
 public class Message {
     private String msg;

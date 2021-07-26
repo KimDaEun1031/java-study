@@ -1,4 +1,4 @@
-package org.daeun.multimodule.parentmodule.blockingqueue;
+package org.daeun.multimodule.parentmodule.blockingqueue.pcpattern;
 
 import lombok.extern.slf4j.Slf4j;
 
