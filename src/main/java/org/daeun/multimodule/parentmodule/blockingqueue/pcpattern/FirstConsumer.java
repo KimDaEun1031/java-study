@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.BlockingQueue;
 
 @Slf4j
-public class Consumer implements Runnable {
+public class FirstConsumer implements Runnable {
     private BlockingQueue<Message> queue;
 
-    public Consumer(BlockingQueue<Message> q) {
+    public FirstConsumer(BlockingQueue<Message> q) {
         this.queue=q;
     }
 

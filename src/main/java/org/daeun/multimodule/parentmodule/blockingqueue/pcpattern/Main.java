@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         BlockingQueue<Message> queue = new ArrayBlockingQueue<>(30);
         Producer producer = new Producer(queue);
-        Consumer consumer = new Consumer(queue);
+        FirstConsumer consumer = new FirstConsumer(queue);
         SecondConsumer secondConsumer = new SecondConsumer(queue);
 
         Thread threadProducer = new Thread(producer);
