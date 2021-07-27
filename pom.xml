@@ -5,6 +5,7 @@
 	<modules>
 		<module>multithread-module</module>
 		<module>blockingqueue-module</module>
+		<module>linkedlistqueue-module</module>
 
 	</modules>
 
