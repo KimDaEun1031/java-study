@@ -185,7 +185,7 @@ public class Main {
     }
 }
 ```
-
+-------
 #### Thread Latency Time Test
 1. Capacity는 10으로 하였고 Producer 클래스에서 Thread.sleep() 메소드를 사용해 각각 100,500,2000으로 테스트 했다.
 2. Thread 이름 = Producer - sendData / FirstConsumer - receiveData1 / SecondConsumer - receiveData2로 지정했다.
@@ -302,7 +302,7 @@ sendData : 5
 13:13:59.625 [sendData] INFO org.daeun.blockingqueue.pcpattern.Producer - sendData id = 12
 13:13:59.625 [sendData] INFO org.daeun.blockingqueue.pcpattern.Producer - sendData size = 0
 ```
-
+-------
 
 2. Blocking Queue를 이용한 Producer&Consumer Pattern (2)
 + 참고 사이트 : https://www.baeldung.com/java-blocking-queue
