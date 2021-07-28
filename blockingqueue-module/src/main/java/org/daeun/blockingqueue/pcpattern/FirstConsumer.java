@@ -18,9 +18,10 @@ public class FirstConsumer implements Runnable {
             Message msg;
 
             while ((msg = queue.take()).getMsg() !="exit") {
-                Thread.sleep(10);
-                System.out.println("Consumed"+msg.getMsg());
-                log.info("Consumer thread id : "+Thread.currentThread().getId());
+                Thread.sleep(1000);
+                System.out.println(Thread.currentThread().getName() + " : " + msg.getMsg());
+                log.info(Thread.currentThread().getName()+ " id = {} ",Thread.currentThread().getId());
+                log.info(Thread.currentThread().getName()+ " size = {}", queue.size());
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

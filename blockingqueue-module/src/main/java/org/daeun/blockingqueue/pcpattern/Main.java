@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 public class Main {
     public static void main(String[] args) {
-        BlockingQueue<Message> queue = new ArrayBlockingQueue<>(30);
+        BlockingQueue<Message> queue = new ArrayBlockingQueue<>(10);
         Producer producer = new Producer(queue);
         FirstConsumer consumer = new FirstConsumer(queue);
         SecondConsumer secondConsumer = new SecondConsumer(queue);
@@ -16,6 +16,10 @@ public class Main {
         Thread threadProducer = new Thread(producer);
         Thread threadConsumer = new Thread(consumer);
         Thread threadSecondConsumer = new Thread(secondConsumer);
+
+        threadProducer.setName("sendData");
+        threadConsumer.setName("receiveData1");
+        threadSecondConsumer.setName("receiveData2");
 
         threadProducer.start();
         threadConsumer.start();
