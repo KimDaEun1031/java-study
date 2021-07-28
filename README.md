@@ -661,7 +661,7 @@ public class NumbersMain {
 }
 ```
 
-# Thread TimeUnit Test
+# Thread Latency Time Test
 1. Capacity는 10으로 하였고 Producer 클래스에서 Thread.sleep() 메소드를 사용해 각각 100,500,2000으로 테스트 했다.
 2. Thread 이름 = Producer - sendData / FirstConsumer - receiveData1 / SecondConsumer - receiveData2로 지정했다.
 3. Consumer는 1000 millis로 고정하였고 log로 Thread의 Id와 Queue의 Size를 출력했다.
