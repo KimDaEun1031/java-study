@@ -1,8 +1,13 @@
 package org.daeun.blockingqueue.number;
 
+
+
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 public class NumbersProducer implements Runnable{
 
     private BlockingQueue<Integer> numbersQueue;
@@ -25,8 +30,9 @@ public class NumbersProducer implements Runnable{
 
     private void generateNumbers() throws InterruptedException {
         for (int i=0; i< 10; i++) {
-            numbersQueue.put(ThreadLocalRandom.current().nextInt(10));
-            //queue에 랜덤 숫자 100개를 넣는다.
+            Thread.sleep(500);
+            numbersQueue.put(i);
+            log.info("number queue = {}", numbersQueue.size());
         }
         for (int j=0; j< poisonPillPerProducer; j++) {
             numbersQueue.put(poisonPill);

@@ -14,6 +14,7 @@ public class NumbersConsumer implements Runnable{
     public void run() {
         try {
             while (true) {
+                Thread.sleep(1000);
                 Integer number = queue.take();
                 if(number.equals(poisonPill)) {
                     return;
