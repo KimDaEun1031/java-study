@@ -7,11 +7,13 @@ import java.util.Objects;
 import java.util.Queue;
 
 @Slf4j
-public class Consumer implements Runnable{
+public class Consumer implements Runnable {
 
     private Queue<Message> queue;
 
-    public Consumer(Queue<Message> q) {this.queue=q;}
+    public Consumer(Queue<Message> q) {
+        this.queue = q;
+    }
 
     @Override
     public void run() {
@@ -27,24 +29,26 @@ public class Consumer implements Runnable{
                 synchronized (queue) {
                     //queue 안에 값이 있다면 값을 반환한 후에 제거하고 비어있다면 Null 값을 반환한다
                     msg = queue.poll();
-                    log.info("msg = {}", msg);
+//                    log.info("msg = {}", msg);
+                }
+//                log.info("msg = {}", msg);
+                //msg가 null이 아닐 경우 if문 바로 다음 문장들 수행
+                if (Objects.nonNull(msg)) {
+                    //localCount를 10으로 나누었을 때 0으로 떨어지면 0.001초로 대기한다
+                    if (++localCount % 10 == 0) {
+                        Thread.sleep(1);
+                        log.info("localCount = {}, queue size = {}", localCount, queue.size());
+                    }
 
-                    //msg가 null이 아닐 경우 if문 바로 다음 문장들 수행
-                    if (Objects.nonNull(msg)) {
-                        //큐에서 뽑은 값이 exit와 같지 않다면 계속 실행한다
-                        //큐에서 뽑은 값이 exit와 같다면 종료한다
-                        if (msg.getMsg().equals("exit")) {
-                            break;
-                        }
-                        log.info("msg is not null, msg = {}", msg.getMsg());
+                    //큐에서 뽑은 값이 exit와 같지 않다면 계속 실행한다
+                    //큐에서 뽑은 값이 exit와 같다면 종료한다
+                    if (msg.getMsg().equals("exit")) {
+                        break;
                     }
                 }
 
-                //localCount를 10으로 나누었을 때 0으로 떨어지면 0.001초로 대기한다
-                if (++localCount % 10 == 0) {
-                    Thread.sleep(1);
-                    log.info("localCount = {}, queue size = {}", localCount, queue.size());
-                }
+
+
             }
 
             log.info("Consumer total time = {}", System.nanoTime() - start);

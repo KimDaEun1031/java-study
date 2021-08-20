@@ -30,10 +30,9 @@ public class Producer implements Runnable {
 
             //해당 객체(queue)에 Lock 걸어 여러 개의 thread가 동시에 접근하는 것을 막는다
             synchronized (queue) {
-                //0.001초 대기
                 queue.add(msg);
-                log.info("msg = {}", msg);
-                log.info("queue size = {}", queue.size());
+//                log.info("msg = {}", msg);
+//                log.info("queue size = {}", queue.size());
             }
 
             //localCount를 100으로 나누었을 때 0으로 떨어지면 0.001초 대기한다
