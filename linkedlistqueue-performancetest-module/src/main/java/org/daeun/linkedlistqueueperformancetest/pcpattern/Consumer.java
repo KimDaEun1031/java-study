@@ -45,6 +45,7 @@ public class Consumer implements Runnable {
                     if (msg.getMsg().equals("exit")) {
                         break;
                     }
+
                 }
 
 

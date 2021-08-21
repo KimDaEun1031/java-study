@@ -41,6 +41,7 @@ public class Producer implements Runnable {
                 log.info("localCount = {}, count ={}", localCount, counter.get());
             }
 
+
             //counter의 값이 100만보다 크거나 같다면 종료
             if (counter.get() >= 1000000)
                 break;

@@ -7,6 +7,7 @@
 		<module>blockingqueue-module</module>
 		<module>linkedlistqueue-module</module>
         <module>linkedlistqueue-performancetest-module</module>
+        <module>array-module</module>
 
     </modules>
 
