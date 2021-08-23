@@ -47,6 +47,12 @@ java.util.concurrent 패키지에 있는 인터페이스로 Thread-safe한 Queue
 
 ![dddfdfdfdf](https://user-images.githubusercontent.com/73865700/126962213-ce65c4a1-79ee-4f6a-b98f-19f967976ae1.png)
 
+**변경**
+- Consumer Class 2개 -> 1개
+- Producer Class Thread.sleep(i) -> Thread.sleep(1000)
+- Main Class Thread array로 Consumer 생성
+
+
 #### Message Class
 ```
 public class Message {
@@ -62,58 +68,34 @@ public class Message {
 }
 ```
 
-#### FisrtConsumer & SecondConsumer Class
+#### Consumer Class
 ```
-import lombok.extern.slf4j.Slf4j;
-import java.util.concurrent.BlockingQueue;
-
 @Slf4j
-public class FirstConsumer implements Runnable {
+//데이터를 소비하는 클래스
+public class Consumer implements Runnable {
+    //Producer가 생성한 메세지가 들어있는 공간
     private BlockingQueue<Message> queue;
-
-    public FirstConsumer(BlockingQueue<Message> q) {
-        this.queue=q;
+    
+    //Main에서 인스턴스 변수 queue를 사용할 수 있게 하는 메소드
+    public Consumer(BlockingQueue<Message> q) {
+        this.queue = q;
     }
 
     @Override
+    //Thread에서 실행되는 메소드
     public void run() {
         try {
             Message msg;
 
-            while ((msg = queue.take()).getMsg() !="exit") {
-                Thread.sleep(10);
-                System.out.println("Consumed"+msg.getMsg());
-                log.info("Consumer thread id : "+Thread.currentThread().getId());
+            //큐에서 뽑은 값이 exit와 같지 않다면 계속 실행한다
+            //큐에서 뽑은 값이 exit와 같다면 종료한다
+            while (!(msg = queue.take()).getMsg().equals("exit")) {
+            	//0.5초 대기
+                Thread.sleep(500);
+                log.info("msg = {}", msg);
+                log.info("queue size = {}", queue.size());
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-}
-```
 
-```
-import lombok.extern.slf4j.Slf4j;
-import java.util.concurrent.BlockingQueue;
-
-@Slf4j
-public class SecondConsumer implements Runnable {
-    private BlockingQueue<Message> queue;
-
-    public SecondConsumer(BlockingQueue<Message> q) {
-        this.queue=q;
-    }
-
-    @Override
-    public void run() {
-        try {
-            Message msg;
-
-            while ((msg = queue.take()).getMsg() !="exit") {
-                Thread.sleep(10);
-                System.out.println("SecondConsumed"+msg.getMsg());
-                log.info("SecondConsumer thread id : "+Thread.currentThread().getId());
-            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -123,36 +105,46 @@ public class SecondConsumer implements Runnable {
 
 #### Producer Class
 ```
-import lombok.extern.slf4j.Slf4j;
-import java.util.concurrent.BlockingQueue;
-
 @Slf4j
+//데이터를 생성하는 클래스
 public class Producer implements Runnable {
-    private BlockingQueue<Message> queue;
 
-    public Producer(BlockingQueue<Message> q) {
-        this.queue=q;
-    }
+    //Producer가 데이터를 입력하는 공간
+    private BlockingQueue<Message> queue; //인스턴스 변수
+    
+    //Main에서 인스턴스 변수 queue를 사용할 수 있게 하는 메소드
+    public Producer(BlockingQueue<Message> q) {  //() 매개변수
+    	this.queue = q; 
+    } 
 
     @Override
-    public void run() {
-        for(int i=0;i<31;i++) {
-            Message msg = new Message(""+i);
+    //Thread에서 실행되는 메소드
+    public synchronized void run() {
+        for (int i = 0; i <= 10; i++) {
+            Message msg = new Message("" + i);
             try {
-                Thread.sleep(i);
+            	//1초 대기
+                Thread.sleep(1000);
+                //Queue에 msg 삽입
                 queue.put(msg);
-                System.out.println("Produced"+msg.getMsg());
-                log.info("Producer thread id : "+Thread.currentThread().getId());
+				
+                log.info("msg = {}", msg);
+                log.info("queue size = {}", queue.size());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
+        //종료 용 exit 메세지를 생성한다
         Message msg = new Message("exit");
-        try {
-            queue.put(msg);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        
+        //끝내야하는 Thread 개수보다 많이 넣는다
+        for (int i = 0; i < 3; i++) {
+            try {
+                queue.put(msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
@@ -160,28 +152,34 @@ public class Producer implements Runnable {
 
 #### Main Class
 ```
-import lombok.extern.slf4j.Slf4j;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 @Slf4j
 public class Main {
     public static void main(String[] args) {
-        BlockingQueue<Message> queue = new ArrayBlockingQueue<>(30);
+    
+        //Producer와 Consumer가 공유하는 자원
+        BlockingQueue<Message> queue = new ArrayBlockingQueue<>(5); //5개로 용량을 제한
+        
+        //데이터를 생성하는 클래스를 생성
         Producer producer = new Producer(queue);
-        FirstConsumer consumer = new FirstConsumer(queue);
-        SecondConsumer secondConsumer = new SecondConsumer(queue);
+        //데이터를 소비하는 클래스를 생성
+        Consumer consumer = new Consumer(queue);
 
+        //Producer와 스레드 생성
         Thread threadProducer = new Thread(producer);
-        Thread threadConsumer = new Thread(consumer);
-        Thread threadSecondConsumer = new Thread(secondConsumer);
-
+        //Producer와 스레드 이름 지정
+        threadProducer.setName("sendData");
+        //Producer와 스레드 시작
         threadProducer.start();
-        threadConsumer.start();
-        threadSecondConsumer.start();
 
-        System.out.println("Test Start");
+        Thread[] threadConsumerArray = new Thread[2]; //2개 생성
+        for (int index = 0; index < threadConsumerArray.length; index++) {
+            //Thread Consumer 생성
+            threadConsumerArray[index] = new Thread(consumer);
+            threadConsumerArray[index].setName("receiveConsumerData"+(index+1)); 
+            threadConsumerArray[index].start();
+        }
 
+        log.info("Test Start");
     }
 }
 ```
