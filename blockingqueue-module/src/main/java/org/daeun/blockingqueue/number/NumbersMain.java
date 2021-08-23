@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 @Slf4j
 public class NumbersMain {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         int BOUND = 10;
         int N_PRODUCERS = 4;
         int N_CONSUMERS = Runtime.getRuntime().availableProcessors();

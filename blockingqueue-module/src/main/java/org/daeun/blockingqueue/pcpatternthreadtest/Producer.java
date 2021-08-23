@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 public class Producer implements Runnable {
-    private BlockingQueue<Message> queue;
+    private final BlockingQueue<Message> queue;
 
     public Producer(BlockingQueue<Message> q) {
         this.queue=q;

@@ -26,8 +26,8 @@ public class ThreadPerformanceTest {
 
 class MyThread extends Thread {
     public static long sum;
-    private int start;
-    private int end;
+    private final int start;
+    private final int end;
 
     public MyThread(int start, int end) {
         this.start=start;

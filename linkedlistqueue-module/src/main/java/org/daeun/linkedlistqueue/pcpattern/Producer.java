@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 //데이터를 생성하는 클래스
 public class Producer implements Runnable {
     //프로듀서가 데이터를 넣어야하는 공간
-    private Queue<Message> queue; //인스턴스 변수
+    private final Queue<Message> queue; //인스턴스 변수
 
     //메인에서 인스턴스 변수 queue를 사용할 수 있게 하는 메소드
     public Producer(Queue<Message> q) {

@@ -9,7 +9,7 @@ import java.util.Queue;
 @Slf4j
 public class Consumer implements Runnable {
 
-    private Queue<Message> queue;
+    private final Queue<Message> queue;
 
     public Consumer(Queue<Message> q) {
         this.queue = q;
@@ -23,7 +23,6 @@ public class Consumer implements Runnable {
         try {
             Message msg;
 
-
             while (true) {
                 //해당 객체(queue)에 Lock 걸어 여러 개의 thread가 동시에 접근하는 것을 막는다
                 synchronized (queue) {
@@ -31,7 +30,7 @@ public class Consumer implements Runnable {
                     msg = queue.poll();
 //                    log.info("msg = {}", msg);
                 }
-//                log.info("msg = {}", msg);
+
                 //msg가 null이 아닐 경우 if문 바로 다음 문장들 수행
                 if (Objects.nonNull(msg)) {
                     //localCount를 10으로 나누었을 때 0으로 떨어지면 0.001초로 대기한다
@@ -45,15 +44,10 @@ public class Consumer implements Runnable {
                     if (msg.getMsg().equals("exit")) {
                         break;
                     }
-
                 }
-
-
-
             }
 
             log.info("Consumer total time = {}", System.nanoTime() - start);
-            log.info("queue size = {}", queue.size());
 
         } catch (Exception e) {
             e.printStackTrace();

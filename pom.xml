@@ -7,9 +7,9 @@
 		<module>blockingqueue-module</module>
 		<module>linkedlistqueue-module</module>
         <module>linkedlistqueue-performancetest-module</module>
-        <module>array-module</module>
+		<module>question-module</module>
 
-    </modules>
+	</modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

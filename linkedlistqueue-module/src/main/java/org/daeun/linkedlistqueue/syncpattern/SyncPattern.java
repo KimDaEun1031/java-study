@@ -24,7 +24,7 @@ public class SyncPattern {
 
 
         //스레드 콘슈머 배열
-        Thread[] threadConsumerArray = new Thread[1];
+        Thread[] threadConsumerArray = new Thread[2];
         for (int index = 0; index < threadConsumerArray.length; index++) {
             //스레드 콘슈머 생성
             threadConsumerArray[index] = new Thread(consumer);

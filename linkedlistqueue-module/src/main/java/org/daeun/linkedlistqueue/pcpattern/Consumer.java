@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 //데이터를 소비하는 클래스
 public class Consumer implements Runnable {
     //프로듀서가 생성한 메세지가 들어있는 공간
-    private Queue<Message> queue;
+    private final Queue<Message> queue;
 
     //메인에서 인스턴스 변수 queue를 사용할 수 있게 하는 메소드
     public Consumer(Queue<Message> q) {
@@ -49,7 +49,7 @@ public class Consumer implements Runnable {
 //                        log.info("msg is not null, msg = {}", msg.getMsg());
                     }
 
-                    log.info("queue size = {}", queue.size());
+//                    log.info("queue size = {}", queue.size());
                 }
             }
             log.info("total time = {}", System.nanoTime() - start);

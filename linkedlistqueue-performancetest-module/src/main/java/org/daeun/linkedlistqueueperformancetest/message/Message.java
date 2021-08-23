@@ -4,7 +4,7 @@ import lombok.ToString;
 
 @ToString
 public class Message {
-    private String msg;
+    private final String msg;
 
     public Message(String str) {
         this.msg=str;

@@ -3,7 +3,7 @@ package org.daeun.blockingqueue.number;
 import java.util.concurrent.BlockingQueue;
 
 public class NumbersConsumer implements Runnable{
-    private BlockingQueue<Integer> queue;
+    private final BlockingQueue<Integer> queue;
     private final int poisonPill;
 
     public NumbersConsumer(BlockingQueue<Integer> queue, int poisonPill) {

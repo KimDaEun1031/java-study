@@ -1,7 +1,7 @@
 package org.daeun.blockingqueue.pcpatternthreadtest;
 
 public class Message {
-    private String msg;
+    private final String msg;
 
     public Message(String str) {
         this.msg=str;

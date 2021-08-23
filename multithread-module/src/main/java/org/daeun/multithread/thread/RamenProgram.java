@@ -2,7 +2,7 @@ package org.daeun.multithread.thread;
 
 public class RamenProgram {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             RamenCook ramenCook = new RamenCook(4);
             new Thread(ramenCook, "A").start();
@@ -18,7 +18,7 @@ public class RamenProgram {
 class RamenCook implements Runnable {
 
     private int ramenCount;
-    private String[] burners = {"_", "_", "_", "_"};
+    private final String[] burners = {"_", "_", "_", "_"};
 
     public RamenCook(int count) {
         ramenCount = count;

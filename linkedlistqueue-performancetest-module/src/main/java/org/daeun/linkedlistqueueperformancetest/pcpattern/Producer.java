@@ -8,11 +8,10 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-
 public class Producer implements Runnable {
 
-    private Queue<Message> queue;
-    private AtomicInteger counter = new AtomicInteger();
+    private final Queue<Message> queue;
+    private final AtomicInteger counter = new AtomicInteger();
 
     public Producer(Queue<Message> q) {
         this.queue = q;
@@ -60,6 +59,4 @@ public class Producer implements Runnable {
             }
         }
     }
-
-
 }

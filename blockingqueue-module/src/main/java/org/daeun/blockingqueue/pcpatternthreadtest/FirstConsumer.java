@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 public class FirstConsumer implements Runnable {
-    private BlockingQueue<Message> queue;
+    private final BlockingQueue<Message> queue;
 
     public FirstConsumer(BlockingQueue<Message> q) {
         this.queue=q;
