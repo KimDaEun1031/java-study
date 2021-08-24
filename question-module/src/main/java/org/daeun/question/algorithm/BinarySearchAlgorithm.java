@@ -17,7 +17,6 @@ public class BinarySearchAlgorithm {
     찾는 값이 없을 경우 -1일 출력한다.
 
      */
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -70,26 +69,5 @@ public class BinarySearchAlgorithm {
             System.out.print(resultArray[i] + " ");
         }
 
-
-//        int[] binaryArray = {1,2,3,5,7,9,11,16};
-//        int target = 10;
-//        int low = 1;
-//        int high = binaryArray.length-1;
-//        int mid;
-//        while (low <= high) {
-//            mid = (low+high) / 2;
-//            if(binaryArray[mid] == target) {
-//                System.out.println("종료");
-//                System.out.println(binaryArray[mid]);
-//                break;
-//            }
-//            if(binaryArray[mid] > target) {
-//                high = mid -1;
-//            } else {
-//                low = mid + 1;
-//            }
-//
-//        }
-//        System.out.print(-1 + " ");
     }
 }
