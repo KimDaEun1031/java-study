@@ -48,8 +48,8 @@ public class BadHairDay {
 
         }
 
-        for (int i = 0; i < sum.length; i++) {
-            result += sum[i];
+        for (int j : sum) {
+            result += j;
         }
 
         System.out.println(result);
