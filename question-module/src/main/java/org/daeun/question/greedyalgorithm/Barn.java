@@ -1,11 +1,11 @@
-package org.daeun.question.algorithm;
+package org.daeun.question.greedyalgorithm;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.Scanner;
 
-public class GreedyAlgorithm {
+public class Barn {
     /*
     N개의 화학 물질 C1, C2, …, Cn이 있다.
     이들 각각은 보관되어야 할 온도가 각기 다른데, 각 Ci마다 최저 보관 온도 xi와 최고 보관 온도 yi가 정해져 있다.
@@ -34,11 +34,11 @@ public class GreedyAlgorithm {
                 storageTemp[i][1] = sc.nextInt();
         }
 
-//        for (int i = 0; i < storageTemp.length; i++) {
-//            for (int j = 0; j < 2; j++) {
-//                System.out.printf("C[%d][%d] = %d%n", i, j, storageTemp[i][j]);
-//            }
-//        }
+        for (int i = 0; i < storageTemp.length; i++) {
+            for (int j = 0; j < 2; j++) {
+                System.out.printf("C[%d][%d] = %d%n", i, j, storageTemp[i][j]);
+            }
+        }
 
 
         //for문으로 오름차순 정렬
@@ -53,12 +53,12 @@ public class GreedyAlgorithm {
         }
 
         //sort함수로 오름차순 정렬
-//        Arrays.sort(storageTemp, new Comparator<int[]>() {
-//            @Override
-//            public int compare(int[] o1, int[] o2) {
-//                return Integer.compare(o1[1] , o2[1]);
-//            }
-//        });
+        Arrays.sort(storageTemp, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return Integer.compare(o1[1] , o2[1]);
+            }
+        });
 
         int maxTemp = storageTemp[0][1];
 

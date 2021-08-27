@@ -1,4 +1,4 @@
-package org.daeun.question.algorithm;
+package org.daeun.question.dcalgorithm;
 
 import java.util.Scanner;
 
