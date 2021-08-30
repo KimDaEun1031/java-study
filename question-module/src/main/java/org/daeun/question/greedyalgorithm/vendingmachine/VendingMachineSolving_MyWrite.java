@@ -1,22 +1,17 @@
-package org.daeun.question.greedyalgorithm;
+package org.daeun.question.greedyalgorithm.vendingmachine;
 
 import java.util.Scanner;
 
-public class VendingMachineIgnorant {
+public class VendingMachineSolving_MyWrite {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        int itemPrice = 707;
-        int[] numberOfCoins = new int[6];
+        int itemPrice = 407;
+        int[] numberOfCoins = {4, 5, 2, 7, 3, 4};
+
 //        for (int i = 0; i < numberOfCoins.length; i++) {
 //            numberOfCoins[i] = sc.nextInt();
 //        }
-        numberOfCoins[0] = 4;
-        numberOfCoins[1] = 2;
-        numberOfCoins[2] = 2;
-        numberOfCoins[3] = 6;
-        numberOfCoins[4] = 3;
-        numberOfCoins[5] = 4;
 
         sc.close();
 
@@ -27,7 +22,7 @@ public class VendingMachineIgnorant {
         int index = coins.length - 2;
         //빠지는 값
         int units = coins.length - 1;
-        int checkTemp = 0;
+        int checkSave = 0;
 
         while (index >= 0) {
             for (int i = 1; i <= numberOfCoins[units]; i++) {
@@ -39,13 +34,13 @@ public class VendingMachineIgnorant {
                 int check = itemPrice % coins[index];
 
                 if (check == 0) {
-                    checkTemp = i;
+                    checkSave = i;
                 }
 
                 if (i == numberOfCoins[units]) {
                     //사용하지 않은 동전의 수를 구하기
-                    int min = numberOfCoins[units] - checkTemp;
-                    numberOfCoins[units] = checkTemp;
+                    int min = numberOfCoins[units] - checkSave;
+                    numberOfCoins[units] = checkSave;
                     //사용하지 않은 돈을 복구
                     if (min != 0) {
                         itemPrice += coins[units] * min;
@@ -53,7 +48,7 @@ public class VendingMachineIgnorant {
                     //itemPrice가 0이거나 0보다 작을 경우
                     if (itemPrice <= 0) {
                         //0이 되었을 때 끝난 배열 값에 저장된 i 값 넣어주기
-                        numberOfCoins[units] = checkTemp;
+                        numberOfCoins[units] = checkSave;
                         //While문 종료를 위한 감소
                         index--;
                         break;
@@ -68,7 +63,7 @@ public class VendingMachineIgnorant {
                         break;
                     }
                     //초기화
-                    checkTemp = 0;
+                    checkSave = 0;
                     units--;
                     index--;
                     break;
@@ -81,6 +76,5 @@ public class VendingMachineIgnorant {
         for (int i = 0; i < coins.length; i++) {
             System.out.print(numberOfCoins[i] + " ");
         }
-
     }
 }

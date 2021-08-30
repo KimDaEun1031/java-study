@@ -1,8 +1,8 @@
-package org.daeun.question.greedyalgorithm;
+package org.daeun.question.greedyalgorithm.vendingmachine;
 
 import java.util.Scanner;
 
-public class VendingMachine {
+public class VendingMachineSolving_Blog {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
