@@ -3,7 +3,6 @@ package variousalgorithm;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class VotingForTheStudentPresident {
     public static void main(String[] args) throws IOException {
@@ -26,14 +25,11 @@ public class VotingForTheStudentPresident {
 
         voteStudentPresident(br, student, score, calculatingTheScore);
 
-        //투표
-        System.out.println(Arrays.deepToString(student));
-
-        //비교하기 - 1, 2, 3이 각각 하나씩 들어갔는지
+        //1, 2, 3이 각각 하나씩 들어갔는지 체크 메소드
         checkNumberOfVote(br, student, score, calculatingTheScore);
         int[] highScore = new int[2];
 
-        //비교하기 - 1번 후보 2번 후보 3번 후보 최종 점수 비교하기
+        //1번 후보 2번 후보 3번 후보 최종 점수 비교하기
         getHighScore(score, calculatingTheScore, highScore);
         if (highScore[1] > 0) {
             //최종점수가 같고 2, 3점의 개수도 같다면
@@ -100,7 +96,6 @@ public class VotingForTheStudentPresident {
                 if (score[i] < score[remainder]) {
                     highScore[0] = remainder;
                 }
-                //0번 1번 같
                 getCompareScoreCount(calculatingTheScore, highScore, i);
             }
         }
