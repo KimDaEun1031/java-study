@@ -1,4 +1,4 @@
-package variousalgorithm;
+package org.daeun.question.variousalgorithm;
 
 import java.io.BufferedReader;
 import java.io.IOException;

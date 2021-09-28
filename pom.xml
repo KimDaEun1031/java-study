@@ -8,8 +8,9 @@
 		<module>linkedlistqueue-module</module>
         <module>linkedlistqueue-performancetest-module</module>
 		<module>question-module</module>
+        <module>codepractice</module>
 
-	</modules>
+    </modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -40,6 +41,16 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>2.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
